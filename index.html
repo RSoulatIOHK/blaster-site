@@ -843,7 +843,8 @@ function hl(src) {
   const KW = new Set(['theorem','def','by','where','fun','namespace','end','import','open',
     'let','have','show','sorry','blaster','intro','exact','apply','induction','cases',
     'simp','omega','rfl','rw','#bmc','#kind','#check','#blaster','require','from',
-    'mutual','match','if','then','else','return','do']);
+    'mutual','match','if','then','else','return','do','inductive','structure','instance',
+    'deriving','abbrev','variable','universe','class','extends']);
   const TY = new Set(['Nat','Int','Bool','String','Prop','Type','True','False',
     'List','Array','Fin','Either','Term','A','B']);
   const out = [];
@@ -864,7 +865,8 @@ function hl(src) {
       out.push(`<span class="pu">${esc(src.slice(i,j+1))}</span>`); i=j+1; continue;
     }
     if (/[a-zA-Z_#@']/.test(src[i])) {
-      let j=i; while(j<src.length && /[a-zA-Z0-9_'.!?-]/.test(src[j])) j++;
+      let j=i; while(j<src.length && /[a-zA-Z0-9_'#@.!?-]/.test(src[j])) j++;
+      if (j===i) { out.push(esc(src[i])); i++; continue; } // safety: always advance
       const w=src.slice(i,j);
       if (KW.has(w)) out.push(`<span class="kw">${esc(w)}</span>`);
       else if (TY.has(w)) out.push(`<span class="ty">${esc(w)}</span>`);
