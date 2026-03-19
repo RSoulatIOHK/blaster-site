@@ -259,15 +259,9 @@ a { color: inherit; text-decoration: none; }
 @keyframes sh-fade { from{opacity:0} to{opacity:1} }
 @keyframes sh-bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
 .scroll-chevron {
-  display: flex; flex-direction: column; gap: 5px; align-items: center;
   animation: sh-bob 1.6s ease-in-out infinite;
+  opacity: 0.5;
 }
-.sc-line {
-  width: 18px; height: 2px; background: rgba(205,214,244,0.5);
-  transform-origin: center; border-radius: 1px;
-}
-.sc-line:first-child  { transform: rotate(35deg) translateX(4px); }
-.sc-line:last-child   { transform: rotate(-35deg) translateX(-4px); }
 
 /* ─── TAGLINE ─────────────────────────────────────── */
 .tagline {
@@ -630,10 +624,9 @@ a { color: inherit; text-decoration: none; }
 
   <div class="scroll-hint">
     scroll to explore
-    <div class="scroll-chevron">
-      <div class="sc-line"></div>
-      <div class="sc-line"></div>
-    </div>
+    <svg class="scroll-chevron" width="22" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polyline points="1,1 11,11 21,1" stroke="rgba(205,214,244,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
   </div>
 </section>
 
