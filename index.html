@@ -91,6 +91,7 @@ a { color: inherit; text-decoration: none; }
   height: 1px; background: var(--ink);
 }
 .nav-tab.inactive { color: var(--dim); }
+.nav-tab.inactive:hover { color: var(--txt); background: rgba(255,255,255,0.02); }
 .tab-icon { font-size: 10px; color: var(--ty); }
 .tab-dot-mod { width: 6px; height: 6px; border-radius: 50%; background: var(--nm); }
 
@@ -571,10 +572,10 @@ a { color: inherit; text-decoration: none; }
       <span class="tab-icon">𝕃</span>
       BlasterSite.lean
     </div>
-    <div class="nav-tab inactive">
+    <a class="nav-tab inactive" href="https://github.com/input-output-hk/Lean-blaster/blob/main/README.md" target="_blank" rel="noopener" style="cursor:pointer">
       <span style="color:var(--dim);font-size:11px">◻</span>
       README.md
-    </div>
+    </a>
   </div>
   <nav class="nav-links">
     <a href="#pipeline">How it works</a>
