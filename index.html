@@ -248,23 +248,26 @@ a { color: inherit; text-decoration: none; }
 
 /* ─── SCROLL HINT ─────────────────────────────────── */
 .scroll-hint {
-  margin-top: 40px;
-  font-family: var(--fc); font-size: 11px;
-  color: var(--muted);
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  margin-top: 44px;
+  font-family: var(--fc); font-size: 11.5px;
+  color: var(--dim);
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
   animation: sh-fade 2.5s ease 4s both;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 @keyframes sh-fade { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+@keyframes sh-bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)} }
 .scroll-chevron {
-  display: flex; flex-direction: column; gap: 3px; align-items: center;
+  display: flex; flex-direction: column; gap: 4px; align-items: center;
+  animation: sh-bob 1.8s ease-in-out infinite;
 }
 .sc-line {
-  width: 14px; height: 1px; background: var(--muted);
+  width: 16px; height: 1.5px; background: var(--dim);
   transform-origin: center;
 }
-.sc-line:first-child  { transform: rotate(35deg) translateX(2px); }
-.sc-line:last-child   { transform: rotate(-35deg) translateX(-2px); }
+.sc-line:first-child  { transform: rotate(35deg) translateX(3px); }
+.sc-line:last-child   { transform: rotate(-35deg) translateX(-3px); }
 
 /* ─── TAGLINE ─────────────────────────────────────── */
 .tagline {
@@ -684,58 +687,59 @@ a { color: inherit; text-decoration: none; }
 
   <div class="gallery-grid">
 
-    <!-- Card 1 -->
+    <!-- Card 1: Parametric inductive -->
     <div class="gc">
-      <div class="gc-hdr"><span class="gc-dot"></span> add_comm.lean</div>
-      <div class="gc-code"><span class="kw">theorem</span> <span class="id">add_comm</span> <span class="op">(</span><span class="id">a b</span> <span class="op">:</span> <span class="ty">Nat</span><span class="op">)</span> <span class="op">:</span>
-    <span class="id">a</span> <span class="op">+</span> <span class="id">b</span> <span class="op">=</span> <span class="id">b</span> <span class="op">+</span> <span class="id">a</span> <span class="op">:=</span> <span class="kw">by</span>
+      <div class="gc-hdr"><span class="gc-dot"></span> either.lean</div>
+      <div class="gc-code"><span class="kw">theorem</span> <span class="id">isLeft_not_isRight</span> <span class="op">:</span>
+    <span class="op">∀</span> <span class="op">(</span><span class="id">x</span> <span class="op">:</span> <span class="ty">Either</span> <span class="id">α β</span><span class="op">),</span>
+    <span class="op">¬(</span><span class="id">isRight x</span><span class="op">)</span> <span class="op">=</span> <span class="id">isLeft x</span> <span class="op">:=</span> <span class="kw">by</span>
   <span class="kw">blaster</span></div>
       <div class="gc-status">
         <span class="gc-check">✓ Valid</span>
         <span class="gc-sep">·</span>
-        <span class="gc-time">8ms</span>
+        <span class="gc-time">parametric inductive</span>
       </div>
     </div>
 
-    <!-- Card 2 -->
+    <!-- Card 2: Recursive list -->
     <div class="gc">
-      <div class="gc-hdr"><span class="gc-dot"></span> bitvec_xor.lean</div>
-      <div class="gc-code"><span class="kw">theorem</span> <span class="id">bv_xor_self</span>
-    <span class="op">(</span><span class="id">n</span> <span class="op">:</span> <span class="ty">BitVec</span> <span class="nm">8</span><span class="op">)</span> <span class="op">:</span>
-    <span class="id">n</span> <span class="op">^^^</span> <span class="id">n</span> <span class="op">=</span> <span class="nm">0</span> <span class="op">:=</span> <span class="kw">by</span>
-  <span class="kw">blaster</span></div>
+      <div class="gc-hdr"><span class="gc-dot"></span> list.lean</div>
+      <div class="gc-code"><span class="id">#blaster</span> <span class="op">[</span><span class="op">∀</span> <span class="op">(</span><span class="id">x</span> <span class="op">:</span> <span class="ty">Nat</span><span class="op">)</span>
+       <span class="op">(</span><span class="id">xs</span> <span class="op">:</span> <span class="ty">List</span> <span class="ty">Nat</span><span class="op">),</span>
+  <span class="id">xs</span><span class="op">.</span><span class="id">length</span> <span class="op">+</span> <span class="nm">1</span> <span class="op">=</span>
+    <span class="op">(</span><span class="id">x</span> <span class="op">::</span> <span class="id">xs</span><span class="op">).</span><span class="id">length</span><span class="op">]</span></div>
       <div class="gc-status">
         <span class="gc-check">✓ Valid</span>
         <span class="gc-sep">·</span>
-        <span class="gc-time">22ms</span>
+        <span class="gc-time">recursive list</span>
       </div>
     </div>
 
-    <!-- Card 3 -->
+    <!-- Card 3: Mutual recursion -->
     <div class="gc">
-      <div class="gc-hdr"><span class="gc-dot"></span> sub_cancel.lean</div>
-      <div class="gc-code"><span class="kw">theorem</span> <span class="id">sub_cancel</span>
-    <span class="op">(</span><span class="id">n k</span> <span class="op">:</span> <span class="ty">Nat</span><span class="op">)</span> <span class="op">(</span><span class="id">h</span> <span class="op">:</span> <span class="id">k</span> <span class="op">≤</span> <span class="id">n</span><span class="op">)</span> <span class="op">:</span>
-    <span class="id">n</span> <span class="op">-</span> <span class="id">k</span> <span class="op">+</span> <span class="id">k</span> <span class="op">=</span> <span class="id">n</span> <span class="op">:=</span> <span class="kw">by</span>
-  <span class="kw">blaster</span></div>
+      <div class="gc-hdr"><span class="gc-dot"></span> parity.lean</div>
+      <div class="gc-code"><span class="cm">-- mutual isEven / isOdd</span>
+<span class="id">#blaster</span> <span class="op">[</span><span class="op">∀</span> <span class="op">(</span><span class="id">n</span> <span class="op">:</span> <span class="ty">Nat</span><span class="op">),</span>
+  <span class="id">isEven</span> <span class="op">(</span><span class="id">n</span><span class="op">+</span><span class="nm">2</span><span class="op">)</span> <span class="op">→</span> <span class="id">isEven n</span><span class="op">]</span></div>
       <div class="gc-status">
         <span class="gc-check">✓ Valid</span>
         <span class="gc-sep">·</span>
-        <span class="gc-time">14ms</span>
+        <span class="gc-time">mutual recursion</span>
       </div>
     </div>
 
-    <!-- Card 4 -->
+    <!-- Card 4: State machine k-induction -->
     <div class="gc">
-      <div class="gc-hdr"><span class="gc-dot"></span> state_machine.lean</div>
-      <div class="gc-code"><span class="kw">theorem</span> <span class="id">traffic_safe</span>
-    <span class="op">(</span><span class="id">s</span> <span class="op">:</span> <span class="ty">Light</span><span class="op">)</span> <span class="op">(</span><span class="id">h</span> <span class="op">:</span> <span class="id">safe s</span><span class="op">)</span> <span class="op">:</span>
-    <span class="id">safe</span> <span class="op">(</span><span class="id">next s</span><span class="op">)</span> <span class="op">:=</span> <span class="kw">by</span>
-  <span class="kw">blaster</span></div>
+      <div class="gc-hdr"><span class="gc-dot"></span> counter_sm.lean</div>
+      <div class="gc-code"><span class="cm">-- invariants hold for all states</span>
+<span class="id">#kind</span> <span class="op">(</span><span class="id">max-depth</span><span class="op">:</span> <span class="nm">1</span><span class="op">)</span>
+  <span class="op">[</span><span class="id">counterStateMachine</span><span class="op">]</span>
+
+<span class="cm">✅ Valid · K-Induction</span></div>
       <div class="gc-status">
         <span class="gc-check">✓ Valid</span>
         <span class="gc-sep">·</span>
-        <span class="gc-time">156ms</span>
+        <span class="gc-time">state machine</span>
       </div>
     </div>
 
@@ -756,8 +760,8 @@ a { color: inherit; text-decoration: none; }
         <span class="opt-type">Nat</span>
       </button>
       <button class="try-opt" data-idx="1">
-        <span class="opt-name">bv_and_self</span>
-        <span class="opt-type">BitVec 16</span>
+        <span class="opt-name">add_comm</span>
+        <span class="opt-type">Nat</span>
       </button>
       <button class="try-opt" data-idx="2">
         <span class="opt-name">or_true</span>
@@ -1013,8 +1017,8 @@ const tryThms = [
     result: `<div class="tr"><span class="tb-ok">✓</span><span class="tv">valid</span><span class="tm" style="margin-left:10px">· 6ms</span></div>`
   },
   {
-    code: 'theorem bv_and_self (n : BitVec 16) :\n    n &&& n = n := by\n  blaster',
-    result: `<div class="tr"><span class="tb-ok">✓</span><span class="tv">valid</span><span class="tm" style="margin-left:10px">· 18ms</span></div>`
+    code: 'theorem add_comm (a b : Nat) :\n    a + b = b + a := by\n  blaster',
+    result: `<div class="tr"><span class="tb-ok">✓</span><span class="tv">valid</span><span class="tm" style="margin-left:10px">· 8ms</span></div>`
   },
   {
     code: 'theorem or_true (b : Bool) :\n    (b || true) = true := by\n  blaster',
