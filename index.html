@@ -370,22 +370,21 @@ a { color: inherit; text-decoration: none; }
 /* ─── GALLERY ─────────────────────────────────────── */
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 14px;
 }
 .gc {
   background: var(--bg-ed); border: 1px solid var(--bdr);
   border-radius: 7px; overflow: hidden;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-  cursor: default;
+  cursor: pointer;
   opacity: 0; transform: translateY(16px);
   transition: opacity 0.4s ease, transform 0.4s ease, border-color 0.2s, box-shadow 0.2s;
 }
 .gc.vis { opacity: 1; transform: translateY(0); }
 .gc:hover {
-  border-color: rgba(78,201,148,0.2);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 24px rgba(78,201,148,0.04);
-  transform: translateY(-3px);
+  border-color: rgba(255,255,255,0.12);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  transform: translateY(-2px);
 }
 .gc-hdr {
   display: flex; align-items: center; gap: 7px;
@@ -393,6 +392,8 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--fc); font-size: 11px; color: var(--dim);
 }
 .gc-dot { width:8px;height:8px;border-radius:50%;background:var(--muted); }
+.gc-expand { margin-left: auto; font-size: 10px; color: var(--muted); letter-spacing: 0.05em; }
+.gc:hover .gc-expand { color: var(--dim); }
 .gc-code {
   padding: 14px 14px 12px;
   font-family: var(--fc); font-size: 12.5px;
@@ -405,69 +406,82 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--fc); font-size: 11px;
 }
 .gc-check { color: var(--valid); font-weight: 700; }
+.gc-falsified { color: var(--error); font-weight: 700; }
 .gc-time  { color: var(--dim); }
 .gc-sep   { color: var(--muted); }
+.gc-tag   { margin-left: auto; color: var(--muted); font-size: 10.5px; letter-spacing: 0.05em; }
 
-/* ─── TRY IT ──────────────────────────────────────── */
-.try-layout {
-  display: flex; gap: 16px; margin-top: 40px;
-  align-items: flex-start;
+/* ─── MODAL ──────────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.78);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.22s ease;
 }
-.try-opts {
-  display: flex; flex-direction: column; gap: 6px;
-  flex-shrink: 0; width: 190px;
-}
-.try-opt {
-  padding: 9px 12px;
-  background: transparent; border: 1px solid var(--bdr);
-  border-radius: 5px; font-family: var(--fc); font-size: 12px;
-  color: var(--dim); cursor: pointer; text-align: left;
-  transition: all 0.15s; line-height: 1.5;
-}
-.try-opt:hover { border-color: rgba(255,255,255,0.1); color: var(--txt); }
-.try-opt.sel {
-  border-color: var(--ink); color: var(--txt);
-  background: var(--ink-lo);
-}
-.try-opt .opt-name { display: block; font-weight: 600; }
-.try-opt .opt-type { display: block; color: var(--ty); font-size: 11px; margin-top: 2px; }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
 
-.try-right { flex: 1; min-width: 0; }
-
-.try-ed {
+.modal {
+  width: 100%; max-width: 640px;
   background: var(--bg-ed); border: 1px solid var(--bdr);
-  border-radius: 7px; overflow: hidden; margin-bottom: 10px;
+  border-radius: 9px; overflow: hidden;
+  transform: scale(0.96) translateY(10px);
+  transition: transform 0.22s cubic-bezier(0.16,1,0.3,1);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.85);
+  max-height: 90vh; display: flex; flex-direction: column;
 }
-.try-ed-hdr {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 8px 14px;
+.modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+.modal-title {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
   background: var(--bg-gut); border-bottom: 1px solid var(--bdr-lo);
-  font-family: var(--fc); font-size: 11px; color: var(--dim);
+  font-family: var(--fc); font-size: 12px; color: var(--dim);
+  flex-shrink: 0;
+}
+.modal-close {
+  margin-left: auto; background: none; border: none;
+  color: var(--dim); cursor: pointer; font-size: 16px;
+  line-height: 1; padding: 0 2px;
+  transition: color 0.15s;
+}
+.modal-close:hover { color: var(--txt); }
+
+.modal-body { overflow-y: auto; }
+
+.modal-code {
+  padding: 16px 20px; font-family: var(--fc); font-size: 13px;
+  line-height: 1.65; white-space: pre; overflow-x: auto;
+}
+
+.modal-actions {
+  padding: 12px 16px; border-top: 1px solid var(--bdr-lo);
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
 }
 .blast-btn {
-  padding: 5px 14px; background: var(--ink); border: none;
-  border-radius: 3px; font-family: var(--fc); font-size: 11.5px;
+  padding: 7px 18px; background: var(--ink); border: none;
+  border-radius: 4px; font-family: var(--fc); font-size: 12px;
   font-weight: 600; color: white; cursor: pointer;
   transition: background 0.15s; letter-spacing: 0.03em;
 }
 .blast-btn:hover:not(:disabled) { background: #c74838; }
 .blast-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-.blast-btn.success { background: #2d7a55; }
+.blast-btn.done-ok  { background: #2d7a55; }
+.blast-btn.done-err { background: #7a2d2d; }
+.modal-hint { font-family: var(--fc); font-size: 11px; color: var(--muted); }
 
-.try-code {
-  padding: 16px; font-family: var(--fc); font-size: 13px;
-  line-height: 1.65; white-space: pre; overflow-x: auto;
-  min-height: 72px;
-}
-.try-result {
+.modal-term {
+  margin: 0 16px 12px;
   background: var(--bg-term); border: 1px solid var(--bdr);
-  border-radius: 6px; overflow: hidden;
+  border-radius: 5px; overflow: hidden;
   max-height: 0; transition: max-height 0.35s ease;
+  flex-shrink: 0;
 }
-.try-result.show { max-height: 90px; }
-.try-result-body {
-  padding: 12px 16px; font-family: var(--fc); font-size: 13px;
-  line-height: 1.6;
+.modal-term.show { max-height: 130px; }
+.modal-term-body {
+  padding: 12px 14px; font-family: var(--fc); font-size: 12.5px; line-height: 1.6;
 }
 
 /* ─── INSTALL ─────────────────────────────────────── */
@@ -542,9 +556,6 @@ a { color: inherit; text-decoration: none; }
 /* ─── RESPONSIVE ──────────────────────────────────── */
 @media (max-width: 640px) {
   .nav-links a:not(.primary) { display: none; }
-  .try-layout { flex-direction: column; }
-  .try-opts { flex-direction: row; flex-wrap: wrap; width: 100%; }
-  .try-opt { flex: 1; min-width: 140px; }
   .pipe-row { flex-direction: column; }
   .pipe-conn { display: none; }
   .gallery-grid { grid-template-columns: 1fr; }
@@ -685,107 +696,62 @@ a { color: inherit; text-decoration: none; }
   <div class="section-tag fade-up">examples</div>
   <h3 class="section-title fade-up" style="transition-delay:0.05s">What Blaster handles today</h3>
 
-  <div class="gallery-grid">
+  <div class="gallery-grid" id="gallery-grid">
 
-    <!-- Card 1: Higher-order functions -->
-    <div class="gc">
-      <div class="gc-hdr"><span class="gc-dot"></span> higher_order.lean</div>
+    <div class="gc" data-ex="0">
+      <div class="gc-hdr"><span class="gc-dot"></span> higher_order.lean <span class="gc-expand">click to run →</span></div>
       <div class="gc-code"><span class="id">#blaster</span> <span class="op">[</span>
   <span class="op">∀</span> <span class="op">(</span><span class="id">x</span> <span class="op">:</span> <span class="ty">Nat</span><span class="op">)</span> <span class="op">(</span><span class="id">xs</span> <span class="op">:</span> <span class="ty">List</span> <span class="ty">Nat</span><span class="op">),</span>
   <span class="op">!</span><span class="id">xs</span><span class="op">.</span><span class="id">isEmpty</span> <span class="op">→</span>
-  <span class="op">(</span><span class="id">xs</span><span class="op">.</span><span class="id">map</span> <span class="op">(</span><span class="ty">Nat</span><span class="op">.</span><span class="id">add x</span><span class="op">)).</span><span class="id">head!</span>
-    <span class="op">≥</span> <span class="id">x</span><span class="op">]</span></div>
-      <div class="gc-status">
-        <span class="gc-check">✓ Valid</span>
-        <span class="gc-sep">·</span>
-        <span class="gc-time">higher-order functions</span>
-      </div>
+  <span class="op">(</span><span class="id">xs</span><span class="op">.</span><span class="id">map</span> <span class="op">(</span><span class="ty">Nat</span><span class="op">.</span><span class="id">add x</span><span class="op">)).</span><span class="id">head!</span> <span class="op">≥</span> <span class="id">x</span><span class="op">]</span></div>
+      <div class="gc-status"><span class="gc-check">✓ Valid</span><span class="gc-sep">·</span><span class="gc-tag">higher-order</span></div>
     </div>
 
-    <!-- Card 2: Polymorphism + BEq propagation -->
-    <div class="gc">
-      <div class="gc-hdr"><span class="gc-dot"></span> polymorphism.lean</div>
+    <div class="gc" data-ex="1">
+      <div class="gc-hdr"><span class="gc-dot"></span> polymorphism.lean <span class="gc-expand">click to run →</span></div>
       <div class="gc-code"><span class="id">#blaster</span> <span class="op">[</span>
   <span class="op">(∀</span> <span class="op">(</span><span class="id">α</span><span class="op">)</span> <span class="op">(</span><span class="id">a b</span> <span class="op">:</span> <span class="id">α</span><span class="op">)</span> <span class="op">[</span><span class="ty">BEq</span> <span class="id">α</span><span class="op">],</span>
     <span class="id">a</span> <span class="op">==</span> <span class="id">b</span> <span class="op">→</span> <span class="id">a</span> <span class="op">=</span> <span class="id">b</span><span class="op">)</span> <span class="op">→</span>
   <span class="op">∀</span> <span class="op">(</span><span class="id">x y</span> <span class="op">:</span> <span class="ty">Either</span> <span class="id">α β</span><span class="op">)</span>
-    <span class="op">[</span><span class="ty">BEq</span> <span class="id">α</span><span class="op">]</span> <span class="op">[</span><span class="ty">BEq</span> <span class="id">β</span><span class="op">],</span>
-    <span class="id">x</span> <span class="op">==</span> <span class="id">y</span> <span class="op">→</span> <span class="id">x</span> <span class="op">=</span> <span class="id">y</span><span class="op">]</span></div>
-      <div class="gc-status">
-        <span class="gc-check">✓ Valid</span>
-        <span class="gc-sep">·</span>
-        <span class="gc-time">polymorphism + typeclass</span>
-      </div>
+    <span class="op">[</span><span class="ty">BEq</span> <span class="id">α</span><span class="op">]</span> <span class="op">[</span><span class="ty">BEq</span> <span class="id">β</span><span class="op">],</span> <span class="id">x</span> <span class="op">==</span> <span class="id">y</span> <span class="op">→</span> <span class="id">x</span> <span class="op">=</span> <span class="id">y</span><span class="op">]</span></div>
+      <div class="gc-status"><span class="gc-check">✓ Valid</span><span class="gc-sep">·</span><span class="gc-tag">polymorphism + typeclass</span></div>
     </div>
 
-    <!-- Card 3: Mutual recursion -->
-    <div class="gc">
-      <div class="gc-hdr"><span class="gc-dot"></span> mutual_rec.lean</div>
-      <div class="gc-code"><span class="kw">theorem</span> <span class="id">A_self_size</span>
-    <span class="op">(</span><span class="id">a</span> <span class="op">:</span> <span class="ty">A</span><span class="op">)</span> <span class="op">:</span>
-    <span class="op">(</span><span class="ty">A</span><span class="op">.</span><span class="id">self a</span><span class="op">).</span><span class="id">sizeA</span>
-      <span class="op">=</span> <span class="id">a</span><span class="op">.</span><span class="id">sizeA</span> <span class="op">+</span> <span class="nm">1</span> <span class="op">:=</span> <span class="kw">by</span>
+    <div class="gc" data-ex="2">
+      <div class="gc-hdr"><span class="gc-dot"></span> mutual_inductive.lean <span class="gc-expand">click to run →</span></div>
+      <div class="gc-code"><span class="kw">theorem</span> <span class="id">A_self_size</span> <span class="op">(</span><span class="id">a</span> <span class="op">:</span> <span class="ty">A</span><span class="op">)</span> <span class="op">:</span>
+    <span class="op">(</span><span class="ty">A</span><span class="op">.</span><span class="id">self a</span><span class="op">).</span><span class="id">sizeA</span> <span class="op">=</span> <span class="id">a</span><span class="op">.</span><span class="id">sizeA</span> <span class="op">+</span> <span class="nm">1</span> <span class="op">:=</span> <span class="kw">by</span>
   <span class="kw">blaster</span></div>
-      <div class="gc-status">
-        <span class="gc-check">✓ Valid</span>
-        <span class="gc-sep">·</span>
-        <span class="gc-time">mutually inductive types</span>
-      </div>
+      <div class="gc-status"><span class="gc-check">✓ Valid</span><span class="gc-sep">·</span><span class="gc-tag">mutually inductive</span></div>
     </div>
 
-    <!-- Card 4: Counterexample for recursive type -->
-    <div class="gc">
-      <div class="gc-hdr"><span class="gc-dot"></span> counterexample.lean</div>
-      <div class="gc-code"><span class="cm">-- finds a deeply-nested Term</span>
-<span class="id">#blaster</span> <span class="op">[</span>
-  <span class="op">∀</span> <span class="op">(</span><span class="id">α</span> <span class="op">:</span> <span class="ty">Type</span><span class="op">)</span>
-    <span class="op">(</span><span class="id">x</span> <span class="op">:</span> <span class="ty">Term</span> <span class="id">α</span><span class="op">),</span>
+    <div class="gc" data-ex="3">
+      <div class="gc-hdr"><span class="gc-dot"></span> counterexample.lean <span class="gc-expand">click to run →</span></div>
+      <div class="gc-code"><span class="cm">-- Blaster finds a witness</span>
+<span class="id">#blaster</span> <span class="op">[∀</span> <span class="op">(</span><span class="id">α</span> <span class="op">:</span> <span class="ty">Type</span><span class="op">)</span> <span class="op">(</span><span class="id">x</span> <span class="op">:</span> <span class="ty">Term</span> <span class="id">α</span><span class="op">),</span>
   <span class="id">sizeOfTerm x</span> <span class="op">&lt;</span> <span class="nm">10</span><span class="op">]</span></div>
-      <div class="gc-status">
-        <span class="gc-check" style="color:var(--error)">✗ Falsified</span>
-        <span class="gc-sep">·</span>
-        <span class="gc-time">counterexample found</span>
-      </div>
+      <div class="gc-status"><span class="gc-falsified">✗ Falsified</span><span class="gc-sep">·</span><span class="gc-tag">counterexample</span></div>
     </div>
 
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- ─── TRY IT ────────────────────────────────────── -->
-<section class="section-wrap narrow" id="try-it">
-  <div class="section-tag fade-up">interactive</div>
-  <h3 class="section-title fade-up" style="transition-delay:0.05s">Try it yourself</h3>
-
-  <div class="try-layout fade-up" style="transition-delay:0.1s">
-    <div class="try-opts">
-      <button class="try-opt sel" data-idx="0">
-        <span class="opt-name">mul_zero</span>
-        <span class="opt-type">Nat</span>
-      </button>
-      <button class="try-opt" data-idx="1">
-        <span class="opt-name">add_comm</span>
-        <span class="opt-type">Nat</span>
-      </button>
-      <button class="try-opt" data-idx="2">
-        <span class="opt-name">or_true</span>
-        <span class="opt-type">Bool</span>
-      </button>
+    <div class="gc" data-ex="4">
+      <div class="gc-hdr"><span class="gc-dot"></span> quant_functions.lean <span class="gc-expand">click to run →</span></div>
+      <div class="gc-code"><span class="id">#blaster</span> <span class="op">[</span>
+  <span class="op">(∀</span> <span class="op">(</span><span class="id">β</span><span class="op">)</span> <span class="op">(</span><span class="id">x</span> <span class="op">:</span> <span class="ty">Term</span> <span class="op">(</span><span class="ty">List</span> <span class="id">β</span><span class="op">))</span>
+     <span class="op">(</span><span class="id">f</span> <span class="op">:</span> <span class="ty">Term</span> <span class="op">(</span><span class="ty">List</span> <span class="id">β</span><span class="op">)</span> <span class="op">→</span> <span class="ty">Nat</span><span class="op">),</span> <span class="id">f x</span> <span class="op">&gt;</span> <span class="nm">10</span><span class="op">)</span> <span class="op">→</span>
+  <span class="op">∀</span> <span class="op">(</span><span class="id">x y</span> <span class="op">:</span> <span class="ty">Term</span> <span class="op">(</span><span class="ty">List</span> <span class="id">α</span><span class="op">))</span>
+    <span class="op">(</span><span class="id">f</span> <span class="op">:</span> <span class="ty">Term</span> <span class="op">(</span><span class="ty">List</span> <span class="id">α</span><span class="op">)</span> <span class="op">→</span> <span class="ty">Nat</span><span class="op">),</span>
+    <span class="id">f x</span> <span class="op">+</span> <span class="id">f y</span> <span class="op">&gt;</span> <span class="nm">20</span><span class="op">]</span></div>
+      <div class="gc-status"><span class="gc-check">✓ Valid</span><span class="gc-sep">·</span><span class="gc-tag">quantification over functions</span></div>
     </div>
 
-    <div class="try-right">
-      <div class="try-ed">
-        <div class="try-ed-hdr">
-          <span>try.lean</span>
-          <button class="blast-btn" id="blast-btn">Blast →</button>
-        </div>
-        <div class="try-code" id="try-code"></div>
-      </div>
-      <div class="try-result" id="try-result">
-        <div class="try-result-body" id="try-result-body"></div>
-      </div>
+    <div class="gc" data-ex="5">
+      <div class="gc-hdr"><span class="gc-dot"></span> state_machine.lean <span class="gc-expand">click to run →</span></div>
+      <div class="gc-code"><span class="cm">-- invariants hold ∀ states, ∀ depths</span>
+<span class="id">#kind</span> <span class="op">(</span><span class="id">max-depth</span><span class="op">:</span> <span class="nm">1</span><span class="op">)</span>
+  <span class="op">[</span><span class="id">counterStateMachine</span><span class="op">]</span></div>
+      <div class="gc-status"><span class="gc-check">✓ Valid</span><span class="gc-sep">·</span><span class="gc-tag">k-induction</span></div>
     </div>
+
   </div>
 </section>
 
@@ -833,6 +799,27 @@ a { color: inherit; text-decoration: none; }
   </div>
 </section>
 
+<!-- ─── MODAL ─────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-title">
+      <span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span>
+      <span id="modal-fname" style="margin-left:8px"></span>
+      <button class="modal-close" id="modal-close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-code" id="modal-code"></div>
+    </div>
+    <div class="modal-term" id="modal-term">
+      <div class="modal-term-body" id="modal-term-body"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="blast-btn" id="modal-blast-btn">Run Blaster →</button>
+      <span class="modal-hint" id="modal-hint">Z3 4.15.2 ready</span>
+    </div>
+  </div>
+</div>
+
 <!-- ─── STATUS BAR ────────────────────────────────── -->
 <footer class="status-bar">
   <div class="sb-item">
@@ -855,67 +842,52 @@ a { color: inherit; text-decoration: none; }
 function hl(src) {
   const KW = new Set(['theorem','def','by','where','fun','namespace','end','import','open',
     'let','have','show','sorry','blaster','intro','exact','apply','induction','cases',
-    'simp','omega','rfl','rw','#bmc','#kind','#check','#blaster','require','from']);
-  const TY = new Set(['Nat','Int','Bool','BitVec','String','Prop','Type','True','False',
-    'List','Array','Fin','Light','SMTArray']);
+    'simp','omega','rfl','rw','#bmc','#kind','#check','#blaster','require','from',
+    'mutual','match','if','then','else','return','do']);
+  const TY = new Set(['Nat','Int','Bool','String','Prop','Type','True','False',
+    'List','Array','Fin','Either','Term','A','B']);
   const out = [];
   let i = 0;
   while (i < src.length) {
-    // Block comment /-...-/
     if (src[i]==='/' && src[i+1]==='-') {
       const e = src.indexOf('-/',i+2);
       const val = e!==-1 ? src.slice(i,e+2) : src.slice(i);
-      out.push(`<span class="cm">${esc(val)}</span>`);
-      i += val.length; continue;
+      out.push(`<span class="cm">${esc(val)}</span>`); i += val.length; continue;
     }
-    // Line comment --
     if (src[i]==='-' && src[i+1]==='-') {
       const e = src.indexOf('\n',i);
       const val = e!==-1 ? src.slice(i,e) : src.slice(i);
-      out.push(`<span class="cm">${esc(val)}</span>`);
-      i += val.length; continue;
+      out.push(`<span class="cm">${esc(val)}</span>`); i += val.length; continue;
     }
-    // String "..."
     if (src[i]==='"') {
       let j=i+1; while(j<src.length && src[j]!=='"') j++;
-      const val = src.slice(i,j+1);
-      out.push(`<span class="pu">${esc(val)}</span>`);
-      i=j+1; continue;
+      out.push(`<span class="pu">${esc(src.slice(i,j+1))}</span>`); i=j+1; continue;
     }
-    // Word / ident
     if (/[a-zA-Z_#@']/.test(src[i])) {
-      let j=i;
-      while(j<src.length && /[a-zA-Z0-9_'.!?]/.test(src[j])) j++;
+      let j=i; while(j<src.length && /[a-zA-Z0-9_'.!?-]/.test(src[j])) j++;
       const w=src.slice(i,j);
       if (KW.has(w)) out.push(`<span class="kw">${esc(w)}</span>`);
       else if (TY.has(w)) out.push(`<span class="ty">${esc(w)}</span>`);
       else out.push(`<span class="id">${esc(w)}</span>`);
       i=j; continue;
     }
-    // Number
     if (/\d/.test(src[i])) {
       let j=i; while(j<src.length && /\d/.test(src[j])) j++;
-      out.push(`<span class="nm">${esc(src.slice(i,j))}</span>`);
-      i=j; continue;
+      out.push(`<span class="nm">${esc(src.slice(i,j))}</span>`); i=j; continue;
     }
-    // Unicode operators
-    const UNI = ['≤','≥','→','←','↔','∀','∃','∧','∨','¬','≠','⟨','⟩','^^^','·'];
+    const UNI = ['≤','≥','→','←','↔','∀','∃','∧','∨','¬','≠','⟨','⟩','^^^','·','✓','✗','✅','❌'];
     let matched=false;
     for (const u of UNI) {
       if (src.startsWith(u,i)) {
-        out.push(`<span class="op">${esc(u)}</span>`);
-        i+=u.length; matched=true; break;
+        out.push(`<span class="op">${esc(u)}</span>`); i+=u.length; matched=true; break;
       }
     }
     if (matched) continue;
-    // Plain
     out.push(esc(src[i])); i++;
   }
   return out.join('');
 }
-function esc(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 /* ─── TYPEWRITER HERO ────────────────────────────── */
 const twLines = document.getElementById('tw-lines');
@@ -927,73 +899,50 @@ function renderTw() {
   const lines = code.split('\n');
   twLines.innerHTML = lines.map((line, i) => {
     const isLast = i === lines.length - 1;
-    const cur = isLast ? '<span class="cursor"></span>' : '';
-    return `<div class="ln"><span class="lc">${hl(line)}${cur}</span></div>`;
+    return `<div class="ln"><span class="lc">${hl(line)}${isLast?'<span class="cursor"></span>':''}</span></div>`;
   }).join('');
 }
 renderTw();
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-
 async function type(text, delay=54) {
-  for (const ch of text) {
-    code += ch; renderTw();
-    await sleep(delay + Math.random()*delay*0.22);
-  }
+  for (const ch of text) { code += ch; renderTw(); await sleep(delay + Math.random()*delay*0.22); }
 }
 async function del(n, delay=28) {
-  for (let i=0; i<n && code.length>0; i++) {
-    code=code.slice(0,-1); renderTw();
-    await sleep(delay);
-  }
+  for (let i=0; i<n && code.length>0; i++) { code=code.slice(0,-1); renderTw(); await sleep(delay); }
 }
 function showTerm(html) { termBody.innerHTML=html; termStrip.classList.add('open'); }
 
 async function heroAnim() {
   await sleep(1200);
-
-  // Act 1: type theorem with sorry
   await type('theorem sub_cancel (n k : Nat) :\n    n - k + k = n := by\n  sorry');
   await sleep(2200);
-
-  // Act 2: replace sorry → blaster
   await del(5, 30);
   await type('blaster', 68);
   await sleep(500);
-
-  showTerm(`<div class="tr"><span class="tb-run">▶</span><span class="ti">Z3 4.12.4 · running...</span></div>`);
+  showTerm(`<div class="tr"><span class="tb-run">▶</span><span class="ti">Z3 4.15.2 · running...</span></div>`);
   await sleep(1100);
   showTerm(`<div class="tr"><span class="tb-err">✗</span><span class="te">counterexample found</span></div>
     <div class="tr" style="padding-left:22px"><span class="ti">n = 0 &nbsp; k = 1</span></div>`);
   await sleep(3000);
-
-  // Act 3: erase tail, add hypothesis
   const tail = ' :\n    n - k + k = n := by\n  blaster';
   await del(tail.length, 24);
   await type(' (h : k \u2264 n) :\n    n - k + k = n := by\n  blaster', 50);
-
-  showTerm(`<div class="tr"><span class="tb-run">▶</span><span class="ti">Z3 4.12.4 · running...</span></div>`);
+  showTerm(`<div class="tr"><span class="tb-run">▶</span><span class="ti">Z3 4.15.2 · running...</span></div>`);
   await sleep(900);
   showTerm(`<div class="tr"><span class="tb-ok">✓</span><span class="tv">valid</span><span class="tm" style="margin-left:10px">· 14ms</span></div>`);
-
   await sleep(3000);
-  // Freeze cursor
   const cur = twLines.querySelector('.cursor');
   if (cur) { cur.style.animation='none'; cur.style.opacity='1'; }
 }
 heroAnim();
 
-/* ─── INTERSECTION OBSERVER ──────────────────────── */
+/* ─── SCROLL ANIMATIONS ──────────────────────────── */
 const io = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) e.target.classList.add('vis');
-  });
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
 }, { threshold: 0.12 });
+document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
 
-document.querySelectorAll('.fade-up,.gc').forEach(el => io.observe(el));
-
-// Pipeline stages with staggered delay
-const pipeStages = document.querySelectorAll('.pipe-stage');
 const pipeIo = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -1002,94 +951,183 @@ const pipeIo = new IntersectionObserver(entries => {
     }
   });
 }, { threshold: 0.2 });
-pipeStages.forEach(el => pipeIo.observe(el));
+document.querySelectorAll('.pipe-stage').forEach(el => pipeIo.observe(el));
 
-// Gallery stagger
 const gcIo = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       const idx = Array.from(document.querySelectorAll('.gc')).indexOf(e.target);
-      setTimeout(() => e.target.classList.add('vis'), idx*80);
+      setTimeout(() => e.target.classList.add('vis'), idx*70);
     }
   });
 }, { threshold: 0.1 });
 document.querySelectorAll('.gc').forEach(el => gcIo.observe(el));
 
-/* ─── TRY IT ─────────────────────────────────────── */
-const tryThms = [
+/* ─── EXAMPLES DATA ──────────────────────────────── */
+const EXAMPLES = [
   {
-    code: 'theorem mul_zero (n : Nat) :\n    n * 0 = 0 := by\n  blaster',
-    result: `<div class="tr"><span class="tb-ok">✓</span><span class="tv">valid</span><span class="tm" style="margin-left:10px">· 6ms</span></div>`
+    file: 'higher_order.lean',
+    code: `-- Head of a mapped list is bounded below
+#blaster [
+  ∀ (x : Nat) (xs : List Nat),
+  !xs.isEmpty →
+  (xs.map (Nat.add x)).head! ≥ x]`,
+    valid: true,
+    resultHtml: `<div class="tr"><span class="tb-ok">✓</span><span class="tv">valid</span><span class="tm" style="margin-left:10px">· Z3 4.15.2</span></div>`
   },
   {
-    code: 'theorem add_comm (a b : Nat) :\n    a + b = b + a := by\n  blaster',
-    result: `<div class="tr"><span class="tb-ok">✓</span><span class="tv">valid</span><span class="tm" style="margin-left:10px">· 8ms</span></div>`
+    file: 'polymorphism.lean',
+    code: `-- BEq equality propagates through Either
+#blaster [
+  (∀ (α : Type) (a b : α) [BEq α],
+    a == b → a = b) →
+  (∀ (α β : Type) (x y : Either α β)
+     [BEq α] [BEq β],
+     x == y → x = y)]`,
+    valid: true,
+    resultHtml: `<div class="tr"><span class="tb-ok">✓</span><span class="tv">valid</span><span class="tm" style="margin-left:10px">· Z3 4.15.2</span></div>`
   },
   {
-    code: 'theorem or_true (b : Bool) :\n    (b || true) = true := by\n  blaster',
-    result: `<div class="tr"><span class="tb-ok">✓</span><span class="tv">valid</span><span class="tm" style="margin-left:10px">· 3ms</span></div>`
+    file: 'mutual_inductive.lean',
+    code: `mutual
+  inductive A | self : A → A | other : B → A | empty
+  inductive B | self : B → B | other : A → B | empty
+end
+
+mutual
+  def A.sizeA : A → Nat
+    | .self a  => a.sizeA + 1
+    | .other b => b.sizeB + 1
+    | .empty   => 0
+  def B.sizeB : B → Nat
+    | .self b  => b.sizeB + 1
+    | .other a => a.sizeA + 1
+    | .empty   => 0
+end
+
+theorem A_self_size (a : A) :
+    (A.self a).sizeA = a.sizeA + 1 := by
+  blaster`,
+    valid: true,
+    resultHtml: `<div class="tr"><span class="tb-ok">✓</span><span class="tv">valid</span><span class="tm" style="margin-left:10px">· Z3 4.15.2</span></div>`
+  },
+  {
+    file: 'counterexample.lean',
+    code: `def sizeOfTerm (t : Term α) : Nat :=
+  match t with
+  | .Ident _      => 1
+  | .Seq xs       => List.length xs
+  | .App _ args   => List.length args
+  | .Annotated t' _ => 1 + sizeOfTerm t'
+
+-- Is every term smaller than 10 nodes?
+#blaster [
+  ∀ (α : Type) (x : Term α),
+  sizeOfTerm x < 10]`,
+    valid: false,
+    resultHtml: `<div class="tr"><span class="tb-err">✗</span><span class="te">falsified</span><span class="tm" style="margin-left:10px">· counterexample found</span></div>
+<div class="tr" style="padding-left:22px;font-size:11.5px;color:var(--dim)">x = Term.Annotated (Term.Annotated (… 10 levels deep))</div>`
+  },
+  {
+    file: 'quant_functions.lean',
+    code: `-- Quantifying over higher-order functions
+#blaster [
+  (∀ (β : Type) (x : Term (List β))
+     (f : Term (List β) → Nat),
+     f x > 10) →
+  (∀ (α : Type)
+     (x y : Term (List α))
+     (f : Term (List α) → Nat),
+     f x + f y > 20)]`,
+    valid: true,
+    resultHtml: `<div class="tr"><span class="tb-ok">✓</span><span class="tv">valid</span><span class="tm" style="margin-left:10px">· Z3 4.15.2</span></div>`
+  },
+  {
+    file: 'state_machine.lean',
+    code: `instance counterStateMachine : StateMachine Request CounterState where
+  init _ := { state := .Ready, timer := 0 }
+  next i s := match s.state with
+    | .Ready => match i with
+      | .Tr => { state := .Delay, timer := 0 }
+      | _   => s
+    | .Delay =>
+      if s.timer < 3 then { s with timer := s.timer + 1 }
+      else { s with state := .Busy }
+    | .Busy => match i with
+      | .Fa => { s with state := .Ready }
+      | _   => s
+  invariants _ s :=
+    (s.timer > 0 → s.timer < 3 → s.state = .Delay) ∧
+    s.timer ≥ 0 ∧ s.timer ≤ 3
+
+-- Prove invariants hold at all reachable depths
+#kind (max-depth: 1) [counterStateMachine]`,
+    valid: true,
+    resultHtml: `<div class="tr"><span class="tb-ok">✓</span><span class="tv">valid</span><span class="tm" style="margin-left:10px">· K-Induction at depth 1</span></div>`
   }
 ];
 
-let tryIdx = 0;
-let tryRunning = false;
-let tryCode = '';
+/* ─── MODAL ──────────────────────────────────────── */
+const overlay   = document.getElementById('modal-overlay');
+const modalCode = document.getElementById('modal-code');
+const modalFname= document.getElementById('modal-fname');
+const modalTerm = document.getElementById('modal-term');
+const modalTermBody = document.getElementById('modal-term-body');
+const modalBlastBtn = document.getElementById('modal-blast-btn');
+const modalHint = document.getElementById('modal-hint');
+const modalClose= document.getElementById('modal-close');
 
-const tryCodeEl = document.getElementById('try-code');
-const tryResult = document.getElementById('try-result');
-const tryResultBody = document.getElementById('try-result-body');
-const blastBtn = document.getElementById('blast-btn');
+let activeEx = null;
+let blasting = false;
 
-function setTryThm(idx) {
-  tryIdx = idx;
-  document.querySelectorAll('.try-opt').forEach((el,i) => el.classList.toggle('sel', i===idx));
-  tryResult.classList.remove('show');
-  blastBtn.className = 'blast-btn';
-  blastBtn.textContent = 'Blast →';
-  blastBtn.disabled = false;
-  // Show without blaster keyword (with sorry)
-  const base = tryThms[idx].code.replace('  blaster','  sorry');
-  tryCodeEl.innerHTML = hl(base);
+function openModal(idx) {
+  activeEx = EXAMPLES[idx];
+  modalFname.textContent = activeEx.file;
+  modalCode.innerHTML = activeEx.code.split('\n').map(l => hl(l)).join('\n');
+  modalTerm.classList.remove('show');
+  modalTermBody.innerHTML = '';
+  modalBlastBtn.className = 'blast-btn';
+  modalBlastBtn.textContent = 'Run Blaster →';
+  modalBlastBtn.disabled = false;
+  modalHint.textContent = 'Z3 4.15.2 ready';
+  blasting = false;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
-setTryThm(0);
 
-document.querySelectorAll('.try-opt').forEach((btn,i) => {
-  btn.addEventListener('click', () => { if (!tryRunning) setTryThm(i); });
+function closeModal() {
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.gc').forEach(card => {
+  card.addEventListener('click', () => openModal(parseInt(card.dataset.ex)));
 });
 
-blastBtn.addEventListener('click', async () => {
-  if (tryRunning) return;
-  tryRunning = true;
-  blastBtn.disabled = true;
-  tryResult.classList.remove('show');
+modalClose.addEventListener('click', closeModal);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  // Animate sorry → blaster
-  const base = tryThms[tryIdx].code.replace('  blaster','  sorry');
-  let animated = base;
-  // Remove 'sorry'
-  for (let i=0; i<5; i++) {
-    animated = animated.slice(0,-1);
-    tryCodeEl.innerHTML = hl(animated) + '<span class="cursor"></span>';
-    await sleep(30);
+modalBlastBtn.addEventListener('click', async () => {
+  if (blasting || !activeEx) return;
+  blasting = true;
+  modalBlastBtn.disabled = true;
+  modalBlastBtn.textContent = 'Running...';
+  modalHint.textContent = 'sending to Z3...';
+  modalTermBody.innerHTML = `<div class="tr"><span class="tb-run">▶</span><span class="ti">Z3 4.15.2 · running...</span></div>`;
+  modalTerm.classList.add('show');
+  await sleep(900 + Math.random()*600);
+  modalTermBody.innerHTML = activeEx.resultHtml;
+  if (activeEx.valid) {
+    modalBlastBtn.className = 'blast-btn done-ok';
+    modalBlastBtn.textContent = '✓ Valid';
+    modalHint.textContent = '';
+  } else {
+    modalBlastBtn.className = 'blast-btn done-err';
+    modalBlastBtn.textContent = '✗ Falsified';
+    modalHint.textContent = '';
   }
-  // Type 'blaster'
-  const suffix = 'blaster';
-  for (const ch of suffix) {
-    animated += ch;
-    tryCodeEl.innerHTML = hl(animated) + '<span class="cursor"></span>';
-    await sleep(60 + Math.random()*20);
-  }
-  tryCodeEl.innerHTML = hl(animated);
-
-  // Show terminal
-  tryResultBody.innerHTML = `<div class="tr"><span class="tb-run">▶</span><span class="ti">running Z3...</span></div>`;
-  tryResult.classList.add('show');
-  await sleep(800 + Math.random()*400);
-
-  tryResultBody.innerHTML = tryThms[tryIdx].result;
-  blastBtn.className = 'blast-btn success';
-  blastBtn.textContent = '✓ Done';
-  tryRunning = false;
+  blasting = false;
 });
 
 /* ─── COPY ───────────────────────────────────────── */
@@ -1106,4 +1144,3 @@ function copyCode(btn, idx) {
 }
 </script>
 </body>
-</html>
